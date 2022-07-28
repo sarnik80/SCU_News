@@ -17,7 +17,6 @@ type Feed struct {
 
 type Entry struct {
 	Title       string `xml:"title"`
-	Link        string `xml:"link"`
 	Author      string `xml:"author"`
 	PublishedAt string `xml:"published"`
 	Summary     string `xml:"summary"`
@@ -70,17 +69,31 @@ func decodeXMLData() *Feed {
 
 }
 
+func writeDataToTXTFile(rssFeed *Feed) {
+
+	f, _ := os.Create("Entry.txt")
+	defer f.Close()
+
+	result := rssFeed.Title + "\n"
+
+	for _, item := range rssFeed.EntryList {
+
+		title := "title : " + item.Title + "\n\n"
+		summary := "Summary : " + item.Summary + "\n\n\n"
+		summary = strings.Replace(summary, "&nbsp;", "", -1)
+		pubAt := "Published At : " + item.PublishedAt + "\n\n"
+		result += title + summary + pubAt
+
+	}
+
+	f.WriteString(result)
+
+}
+
 func main() {
 
 	rssFeed := decodeXMLData()
 
-	f, _ := os.Create("Entry.txt")
-
-	defer f.Close()
-
-	result := rssFeed.EntryList[0].Summary
-
-	result = strings.Replace(result, "&nbsp;", "", -1)
-	f.WriteString(result)
+	writeDataToTXTFile(rssFeed)
 
 }
