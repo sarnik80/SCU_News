@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
 type Feed struct {
@@ -55,14 +56,31 @@ func simpleHandelError(err error) {
 
 }
 
-func main() {
+func decodeXMLData() *Feed {
 
 	byteData := readByteDataFromSCU()
 
 	var r Feed
 
-	xml.Unmarshal(byteData, &r)
+	err := xml.Unmarshal(byteData, &r)
 
-	fmt.Println(r.EntryList[0])
+	simpleHandelError(err)
+
+	return &r
+
+}
+
+func main() {
+
+	rssFeed := decodeXMLData()
+
+	f, _ := os.Create("Entry.txt")
+
+	defer f.Close()
+
+	result := rssFeed.EntryList[0].Summary
+
+	result = strings.Replace(result, "&nbsp;", "", -1)
+	f.WriteString(result)
 
 }
