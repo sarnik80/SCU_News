@@ -9,17 +9,17 @@ import (
 )
 
 type Feed struct {
-	XMLName   xml.Name
-	Title     string
-	EntryList []Entry
+	XMLName   xml.Name `xml:"feed"`
+	Title     string   `xml:"title"`
+	EntryList []Entry  `xml:"entry"`
 }
 
 type Entry struct {
-	Title       string
-	Link        string
-	Author      string
-	PublishedAt string
-	Summary     string
+	Title       string `xml:"title"`
+	Link        string `xml:"link"`
+	Author      string `xml:"author"`
+	PublishedAt string `xml:"published"`
+	Summary     string `xml:"summary"`
 }
 
 const (
@@ -56,5 +56,13 @@ func simpleHandelError(err error) {
 }
 
 func main() {
+
+	byteData := readByteDataFromSCU()
+
+	var r Feed
+
+	xml.Unmarshal(byteData, &r)
+
+	fmt.Println(r.EntryList[0])
 
 }
